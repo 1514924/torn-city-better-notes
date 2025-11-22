@@ -135,7 +135,7 @@
 }
 
 #torn-notes-drawer .title-input {
-  width: 100%;
+  width: calc(100% - 32px);
   padding: 8px 12px;
   background: #3c3c3c;
   border: 1px solid #555;

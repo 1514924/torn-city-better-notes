@@ -19,6 +19,14 @@
   let currentNote = null;
   let isDirty = false;
 
+  // Decode HTML entities
+  function decodeHtmlEntities(text) {
+    if (!text) return text;
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = text;
+    return textarea.value;
+  }
+
   // Simple markdown parser
   function parseMarkdown(markdown) {
     if (!markdown) return '<p style="color: #888;">Preview will appear here...</p>';
@@ -172,8 +180,8 @@
   // Load a specific note
   function loadNote(note) {
     currentNote = note;
-    titleInput.value = note.title || '';
-    editor.value = note.text || '';
+    titleInput.value = decodeHtmlEntities(note.title) || '';
+    editor.value = decodeHtmlEntities(note.text) || '';
     updatePreview();
     isDirty = false;
     updateNoteSelector();
