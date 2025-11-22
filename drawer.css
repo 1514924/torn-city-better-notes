@@ -97,6 +97,12 @@
   min-width: 0;
 }
 
+#torn-notes-drawer .header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
 #torn-notes-drawer .app-title {
   font-size: 13px;
   font-weight: 600;
@@ -104,6 +110,26 @@
   white-space: nowrap;
   letter-spacing: 0.3px;
   text-transform: uppercase;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+#torn-notes-drawer .app-title:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+
+#torn-notes-drawer .creator-link {
+  font-size: 11px;
+  color: #858585;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.15s ease;
+}
+
+#torn-notes-drawer .creator-link:hover {
+  color: #007acc;
+  text-decoration: underline;
 }
 
 #torn-notes-drawer .note-selector {

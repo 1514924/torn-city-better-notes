@@ -26,16 +26,21 @@
         <div class="header">
           <div class="header-main">
             <div class="header-left">
-              <div class="app-title">Better Notes</div>
+              <a href="https://github.com/1514924/torn-city-better-notes" target="_blank" class="app-title">Better Notes</a>
               <select class="note-selector" id="noteSelector">
                 <option value="">Loading notes...</option>
               </select>
             </div>
-            <button class="close-btn" id="closeBtn">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-                <path d="M8 7.293l3.646-3.647a.5.5 0 01.708.708L8.707 8l3.647 3.646a.5.5 0 01-.708.708L8 8.707l-3.646 3.647a.5.5 0 01-.708-.708L7.293 8 3.646 4.354a.5.5 0 01.708-.708L8 7.293z"/>
-              </svg>
-            </button>
+            <div class="header-right">
+              <a href="https://www.torn.com/profiles.php?XID=1514924" target="_blank" class="creator-link">
+                created by Shane [1514924]
+              </a>
+              <button class="close-btn" id="closeBtn">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M8 7.293l3.646-3.647a.5.5 0 01.708.708L8.707 8l3.647 3.646a.5.5 0 01-.708.708L8 8.707l-3.646 3.647a.5.5 0 01-.708-.708L7.293 8 3.646 4.354a.5.5 0 01.708-.708L8 7.293z"/>
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
 
