@@ -2,6 +2,9 @@
 
 A Chrome extension that adds a markdown editor to torn.com notes with live preview.
 
+<img width="2558" height="1272" alt="image" src="https://github.com/user-attachments/assets/febd00c7-ffe5-4d3d-b59b-e6071839bb39" />
+
+
 ## Installation
 
 1. Open Chrome and navigate to `chrome://extensions/`
