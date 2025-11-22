@@ -9,6 +9,7 @@
   const noteSelector = document.getElementById('noteSelector');
   const newNoteBtn = document.getElementById('newNoteBtn');
   const saveBtn = document.getElementById('saveBtn');
+  const importBtn = document.getElementById('importBtn');
   const exportBtn = document.getElementById('exportBtn');
   const deleteBtn = document.getElementById('deleteBtn');
   const closeBtn = document.getElementById('closeBtn');
@@ -102,7 +103,7 @@
     status.className = 'status ' + type;
     setTimeout(() => {
       status.className = 'status';
-      status.textContent = 'Press cmd+[ to toggle drawer';
+      status.textContent = '';
     }, 3000);
   }
 
@@ -112,29 +113,7 @@
       // const response = await fetch('https://www.torn.com/chat/notes');
 
       const response = await fetch("https://www.torn.com/chat/notes", {
-        "headers": {
-          "accept": "*/*",
-          "accept-language": "en-US,en;q=0.9",
-          "baggage": "sentry-trace_id=d3ebc9d02055460f95326ec1f74979db,sentry-sample_rate=0.00025,sentry-transaction=%2Findex.php,sentry-public_key=a78f3131e2934d6dbfe3e3d4acea7ee4,sentry-release=torn%40f7bbf65b161870c9f8f59c9896d0c576aa71e176,sentry-environment=production,sentry-sampled=false,sentry-sample_rand=0.634768",
-          "cache-control": "no-cache",
-          "pragma": "no-cache",
-          "priority": "u=1, i",
-          "sec-ch-ua": "\"Google Chrome\";v=\"141\", \"Not?A_Brand\";v=\"8\", \"Chromium\";v=\"141\"",
-          "sec-ch-ua-arch": "\"arm\"",
-          "sec-ch-ua-bitness": "\"64\"",
-          "sec-ch-ua-full-version": "\"141.0.7390.108\"",
-          "sec-ch-ua-full-version-list": "\"Google Chrome\";v=\"141.0.7390.108\", \"Not?A_Brand\";v=\"8.0.0.0\", \"Chromium\";v=\"141.0.7390.108\"",
-          "sec-ch-ua-mobile": "?0",
-          "sec-ch-ua-model": "\"\"",
-          "sec-ch-ua-platform": "\"macOS\"",
-          "sec-ch-ua-platform-version": "\"26.0.1\"",
-          "sec-fetch-dest": "empty",
-          "sec-fetch-mode": "cors",
-          "sec-fetch-site": "same-origin",
-          "sentry-trace": "d3ebc9d02055460f95326ec1f74979db-9cab9165288c0674-0"
-        },
         "referrer": "https://www.torn.com/index.php",
-        "body": null,
         "method": "GET",
         "mode": "cors",
         "credentials": "include"
@@ -206,8 +185,16 @@
       if (!response.ok) throw new Error('Failed to create note');
 
       const newNote = await response.json();
-      notes.unshift(newNote);
-      loadNote(newNote);
+
+      // Refresh notes list from server
+      await loadNotes();
+
+      // Load the newly created note
+      const createdNote = notes.find(n => n._id === newNote._id);
+      if (createdNote) {
+        loadNote(createdNote);
+      }
+
       showStatus('New note created', 'success');
     } catch (error) {
       console.error('Error creating note:', error);
@@ -287,6 +274,64 @@
     }
   }
 
+  // Import note from .md file
+  function importNote() {
+    try {
+      // Create file input
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = '.md,.markdown,.txt';
+
+      fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        try {
+          const content = await file.text();
+          const fileName = file.name.replace(/\.(md|markdown|txt)$/i, '');
+
+          // Create new note with imported content
+          const response = await fetch('https://www.torn.com/chat/notes', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Requested-With': 'XMLHttpRequest'
+            },
+            body: JSON.stringify({
+              title: fileName,
+              text: content
+            }),
+            credentials: 'include'
+          });
+
+          if (!response.ok) throw new Error('Failed to create note');
+
+          const newNote = await response.json();
+
+          // Refresh notes list from server
+          await loadNotes();
+
+          // Load the newly imported note
+          const importedNote = notes.find(n => n._id === newNote._id);
+          if (importedNote) {
+            loadNote(importedNote);
+          }
+
+          showStatus('Note imported successfully', 'success');
+        } catch (error) {
+          console.error('Error importing note:', error);
+          showStatus('Error importing note', 'error');
+        }
+      });
+
+      // Trigger file picker
+      fileInput.click();
+    } catch (error) {
+      console.error('Error importing note:', error);
+      showStatus('Error importing note', 'error');
+    }
+  }
+
   // Export current note as .md file
   function exportNote() {
     if (!editor.value && !titleInput.value) {
@@ -350,6 +395,7 @@
 
   newNoteBtn.addEventListener('click', createNewNote);
   saveBtn.addEventListener('click', saveNote);
+  importBtn.addEventListener('click', importNote);
   exportBtn.addEventListener('click', exportNote);
   deleteBtn.addEventListener('click', deleteNote);
 

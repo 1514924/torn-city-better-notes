@@ -29,6 +29,7 @@
             </select>
             <button class="btn" id="newNoteBtn">New</button>
             <button class="btn" id="saveBtn">Save</button>
+            <button class="btn btn-secondary" id="importBtn">Import</button>
             <button class="btn btn-secondary" id="exportBtn">Export</button>
             <button class="btn btn-secondary" id="deleteBtn">Delete</button>
           </div>
