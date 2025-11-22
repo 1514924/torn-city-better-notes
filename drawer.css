@@ -2,19 +2,20 @@
 #torn-notes-drawer {
   position: fixed;
   top: 0;
-  right: -50%;
+  left: 0;
   width: 50%;
   min-width: 600px;
   max-width: 1200px;
   height: 100vh;
   z-index: 999999;
-  transition: right 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
-  box-shadow: -5px 0 20px rgba(0, 0, 0, 0.3);
+  transform: translateX(-100%);
+  transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+  box-shadow: 5px 0 20px rgba(0, 0, 0, 0.3);
   background: #1e1e1e;
 }
 
 #torn-notes-drawer.open {
-  right: 0;
+  transform: translateX(0);
 }
 
 /* Backdrop */
