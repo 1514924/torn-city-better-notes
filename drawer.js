@@ -15,6 +15,43 @@
   const closeBtn = document.getElementById('closeBtn');
   const status = document.getElementById('status');
 
+  const Api = {
+    GetNotes: () => fetch("https://www.torn.com/chat/notes", {
+      "referrer": "https://www.torn.com/index.php",
+      "method": "GET",
+      "mode": "cors",
+      "credentials": "include"
+    }),
+    CreateNote: (title, text) => fetch('https://www.torn.com/chat/notes', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Requested-With': 'XMLHttpRequest'
+      },
+      body: JSON.stringify({
+        title,
+        text,
+      }),
+      credentials: 'include'
+    }),
+    UpdateNote: (_id, title, text) => fetch(`https://www.torn.com/chat/notes/${_id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'text/plain;charset=UTF-8'
+      },
+      body: JSON.stringify({
+        lastModifiedTimestamp: Date.now(),
+        title: title,
+        text: text
+      }),
+      credentials: 'include'
+    }),
+    DeleteNote: (_id) => fetch(`https://www.torn.com/chat/notes/${_id}`, {
+      method: 'DELETE',
+      credentials: 'include'
+    }), 
+  }
+
   // State
   let notes = [];
   let currentNote = null;
@@ -110,14 +147,8 @@
   // Load notes from API
   async function loadNotes() {
     try {
-      // const response = await fetch('https://www.torn.com/chat/notes');
 
-      const response = await fetch("https://www.torn.com/chat/notes", {
-        "referrer": "https://www.torn.com/index.php",
-        "method": "GET",
-        "mode": "cors",
-        "credentials": "include"
-      });
+      const response = await Api.GetNotes();
 
       const data = await response.json();
 
@@ -169,18 +200,7 @@
   // Create new note
   async function createNewNote() {
     try {
-      const response = await fetch('https://www.torn.com/chat/notes', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Requested-With': 'XMLHttpRequest'
-        },
-        body: JSON.stringify({
-          title: 'New Note',
-          text: ''
-        }),
-        credentials: 'include'
-      });
+      const response = await Api.CreateNote("New note", "");
 
       if (!response.ok) throw new Error('Failed to create note');
 
@@ -210,18 +230,11 @@
     }
 
     try {
-      const response = await fetch(`https://www.torn.com/chat/notes/${currentNote._id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'text/plain;charset=UTF-8'
-        },
-        body: JSON.stringify({
-          lastModifiedTimestamp: Date.now(),
-          title: titleInput.value || 'Untitled',
-          text: editor.value
-        }),
-        credentials: 'include'
-      });
+      const response = await Api.UpdateNote(
+        currentNote._id,
+        titleInput.value || 'Untitled',
+        editor.value
+      );
 
       if (!response.ok) throw new Error('Failed to save note');
 
@@ -248,12 +261,12 @@
     }
 
     try {
-      const response = await fetch(`https://www.torn.com/chat/notes/${currentNote._id}`, {
-        method: 'DELETE',
-        credentials: 'include'
-      });
+      const response = await Api.DeleteNote(currentNote._id);
 
       if (!response.ok) throw new Error('Failed to delete note');
+
+      // Refresh notes list from server
+      await loadNotes();
 
       notes = notes.filter(n => n._id !== currentNote._id);
       currentNote = null;
@@ -291,18 +304,10 @@
           const fileName = file.name.replace(/\.(md|markdown|txt)$/i, '');
 
           // Create new note with imported content
-          const response = await fetch('https://www.torn.com/chat/notes', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'X-Requested-With': 'XMLHttpRequest'
-            },
-            body: JSON.stringify({
-              title: fileName,
-              text: content
-            }),
-            credentials: 'include'
-          });
+          const response = await Api.CreateNote(
+            fileName,
+            content
+          );
 
           if (!response.ok) throw new Error('Failed to create note');
 
