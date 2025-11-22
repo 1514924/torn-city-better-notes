@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "name": "Better Notes for Torn City",
+  "version": "1.0.0",
+  "description": "Edit and preview Torn.com notes with markdown support. Press Cmd+[ or Ctrl+[ to toggle the notes drawer",
+  "permissions": [
+    "activeTab"
+  ],
+  "host_permissions": [
+    "*://*.torn.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://*.torn.com/*"],
+      "js": ["content.js"],
+      "css": ["drawer.css"]
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["drawer.js"],
+      "matches": ["*://*.torn.com/*"]
+    }
+  ]
+}
