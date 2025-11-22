@@ -231,6 +231,10 @@
   margin: 0 4px;
 }
 
+#torn-notes-drawer .toolbar-spacer {
+  flex: 1;
+}
+
 #torn-notes-drawer .toolbar-btn {
   padding: 5px 10px;
   background: transparent;
