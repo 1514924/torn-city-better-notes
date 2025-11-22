@@ -21,6 +21,7 @@
 
     // Create the drawer content directly in the DOM
     drawer.innerHTML = `
+      <div class="resize-handle"></div>
       <div class="torn-notes-content">
         <div class="header">
           <div class="header-left">
@@ -67,6 +68,58 @@
     // Setup close button handler
     const closeBtn = drawer.querySelector('#closeBtn');
     closeBtn.addEventListener('click', closeDrawer);
+
+    // Setup resize handle
+    setupResizeHandle();
+  }
+
+  // Setup resize handle functionality
+  function setupResizeHandle() {
+    const resizeHandle = drawer.querySelector('.resize-handle');
+    let isResizing = false;
+    let startX = 0;
+    let startWidth = 0;
+
+    // Load saved width from localStorage
+    const savedWidth = localStorage.getItem('torn-notes-drawer-width');
+    if (savedWidth) {
+      drawer.style.width = savedWidth;
+    }
+
+    resizeHandle.addEventListener('mousedown', (e) => {
+      isResizing = true;
+      startX = e.clientX;
+      startWidth = drawer.offsetWidth;
+
+      // Add class to disable transitions during resize
+      drawer.classList.add('resizing');
+
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isResizing) return;
+
+      const deltaX = e.clientX - startX;
+      const newWidth = startWidth + deltaX;
+
+      // Constrain width between min and max
+      const minWidth = 600;
+      const maxWidth = window.innerWidth * 0.9;
+      const constrainedWidth = Math.max(minWidth, Math.min(newWidth, maxWidth));
+
+      drawer.style.width = `${constrainedWidth}px`;
+    });
+
+    document.addEventListener('mouseup', () => {
+      if (isResizing) {
+        isResizing = false;
+        drawer.classList.remove('resizing');
+
+        // Save width to localStorage
+        localStorage.setItem('torn-notes-drawer-width', drawer.style.width);
+      }
+    });
   }
 
   // Open drawer
