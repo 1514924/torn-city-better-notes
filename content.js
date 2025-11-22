@@ -24,20 +24,66 @@
       <div class="resize-handle"></div>
       <div class="torn-notes-content">
         <div class="header">
-          <div class="header-left">
-            <select class="note-selector" id="noteSelector">
-              <option value="">Loading notes...</option>
-            </select>
-            <button class="btn" id="newNoteBtn">New</button>
-            <button class="btn" id="saveBtn">Save</button>
-            <button class="btn btn-secondary" id="importBtn">Import</button>
-            <button class="btn btn-secondary" id="exportBtn">Export</button>
-            <button class="btn btn-secondary" id="deleteBtn">Delete</button>
+          <div class="header-main">
+            <div class="header-left">
+              <div class="app-title">Better Notes</div>
+              <select class="note-selector" id="noteSelector">
+                <option value="">Loading notes...</option>
+              </select>
+            </div>
+            <button class="close-btn" id="closeBtn">
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                <path d="M8 7.293l3.646-3.647a.5.5 0 01.708.708L8.707 8l3.647 3.646a.5.5 0 01-.708.708L8 8.707l-3.646 3.647a.5.5 0 01-.708-.708L7.293 8 3.646 4.354a.5.5 0 01.708-.708L8 7.293z"/>
+              </svg>
+            </button>
           </div>
-          <button class="close-btn" id="closeBtn">&times;</button>
         </div>
 
-        <input type="text" class="title-input" id="titleInput" placeholder="Note title...">
+        <div class="title-section">
+          <input type="text" class="title-input" id="titleInput" placeholder="Untitled Note" spellcheck="false">
+          <div class="toolbar">
+            <div class="toolbar-group">
+              <button class="toolbar-btn" id="newNoteBtn" title="Create new note">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M8 3.5a.5.5 0 01.5.5v3.5H12a.5.5 0 010 1H8.5V12a.5.5 0 01-1 0V8.5H4a.5.5 0 010-1h3.5V4a.5.5 0 01.5-.5z"/>
+                </svg>
+                <span>New</span>
+              </button>
+              <button class="toolbar-btn" id="importBtn" title="Import markdown file">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M8 1a.5.5 0 01.5.5v9.793l2.146-2.147a.5.5 0 01.708.708l-3 3a.5.5 0 01-.708 0l-3-3a.5.5 0 11.708-.708L7.5 11.293V1.5A.5.5 0 018 1z"/>
+                  <path d="M2.5 13.5a.5.5 0 01.5-.5h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z"/>
+                </svg>
+                <span>Import</span>
+              </button>
+            </div>
+            <div class="toolbar-separator"></div>
+            <div class="toolbar-group">
+              <button class="toolbar-btn toolbar-btn-primary" id="saveBtn" title="Save note (Cmd/Ctrl+S)">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z"/>
+                </svg>
+                <span>Save</span>
+              </button>
+            </div>
+            <div class="toolbar-separator"></div>
+            <div class="toolbar-group">
+              <button class="toolbar-btn" id="exportBtn" title="Export as markdown">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M8 15a.5.5 0 01-.5-.5V5.207L5.354 7.354a.5.5 0 11-.708-.708l3-3a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L8.5 5.207V14.5A.5.5 0 018 15z"/>
+                  <path d="M2.5 2.5A.5.5 0 013 2h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z"/>
+                </svg>
+                <span>Export</span>
+              </button>
+              <button class="toolbar-btn toolbar-btn-danger" id="deleteBtn" title="Delete note">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M6.5 1a.5.5 0 00-.5.5v1h4v-1a.5.5 0 00-.5-.5h-3zM11 2.5v-1A1.5 1.5 0 009.5 0h-3A1.5 1.5 0 005 1.5v1H2.5a.5.5 0 000 1h.05l.5 8.5A1.5 1.5 0 004.55 14h6.9a1.5 1.5 0 001.5-1.5l.5-8.5h.05a.5.5 0 000-1H11z"/>
+                </svg>
+                <span>Delete</span>
+              </button>
+            </div>
+          </div>
+        </div>
 
         <div class="content-area">
           <div class="editor-pane">

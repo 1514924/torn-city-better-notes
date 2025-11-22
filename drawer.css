@@ -77,100 +77,179 @@
 }
 
 #torn-notes-drawer .header {
+  background: #2d2d30;
+  border-bottom: 1px solid #3e3e42;
+}
+
+#torn-notes-drawer .header-main {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 12px 16px;
-  background: #252526;
-  border-bottom: 1px solid #3e3e42;
-  gap: 12px;
+  gap: 16px;
 }
 
 #torn-notes-drawer .header-left {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   flex: 1;
   min-width: 0;
+}
+
+#torn-notes-drawer .app-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #007acc;
+  white-space: nowrap;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
 }
 
 #torn-notes-drawer .note-selector {
   flex: 1;
-  min-width: 0;
+  min-width: 180px;
+  max-width: 300px;
   padding: 6px 10px;
-  background: #3c3c3c;
-  border: 1px solid #555;
-  border-radius: 4px;
-  color: #d4d4d4;
-  font-size: 13px;
+  background: #252526;
+  border: 1px solid #3e3e42;
+  border-radius: 3px;
+  color: #cccccc;
+  font-size: 12px;
   cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+#torn-notes-drawer .note-selector:hover {
+  border-color: #4e4e52;
+  background: #2d2d30;
 }
 
 #torn-notes-drawer .note-selector:focus {
-  outline: 1px solid #007acc;
+  outline: none;
   border-color: #007acc;
-}
-
-#torn-notes-drawer .btn {
-  padding: 6px 12px;
-  background: #0e639c;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 12px;
-  white-space: nowrap;
-}
-
-#torn-notes-drawer .btn:hover {
-  background: #1177bb;
-}
-
-#torn-notes-drawer .btn-secondary {
-  background: #3c3c3c;
-}
-
-#torn-notes-drawer .btn-secondary:hover {
-  background: #505050;
-}
-
-#torn-notes-drawer .btn-danger {
-  background: #d73a49;
-}
-
-#torn-notes-drawer .btn-danger:hover {
-  background: #f14c5e;
+  background: #2d2d30;
 }
 
 #torn-notes-drawer .close-btn {
-  padding: 4px 10px;
+  padding: 6px;
   background: transparent;
-  color: #cccccc;
+  color: #858585;
   border: none;
   cursor: pointer;
-  font-size: 20px;
-  line-height: 1;
+  border-radius: 3px;
+  transition: all 0.15s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 #torn-notes-drawer .close-btn:hover {
   background: #3e3e42;
-  color: white;
+  color: #cccccc;
+}
+
+#torn-notes-drawer .title-section {
+  padding: 20px 20px 16px;
+  background: #1e1e1e;
+  border-bottom: 1px solid #2d2d30;
 }
 
 #torn-notes-drawer .title-input {
-  width: calc(100% - 32px);
-  padding: 8px 12px;
-  background: #3c3c3c;
-  border: 1px solid #555;
-  border-radius: 4px;
-  color: #d4d4d4;
-  font-size: 14px;
-  margin: 12px 16px 0;
+  width: 100%;
+  padding: 10px 0;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #e8e8e8;
+  font-size: 20px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
+}
+
+#torn-notes-drawer .title-input:hover {
+  border-bottom-color: #3e3e42;
 }
 
 #torn-notes-drawer .title-input:focus {
   outline: none;
-  border-color: #007acc;
+  border-bottom-color: #007acc;
+}
+
+#torn-notes-drawer .title-input::placeholder {
+  color: #5a5a5a;
+  font-weight: 400;
+}
+
+#torn-notes-drawer .toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+#torn-notes-drawer .toolbar-group {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: #252526;
+  border-radius: 4px;
+  padding: 2px;
+}
+
+#torn-notes-drawer .toolbar-separator {
+  width: 1px;
+  height: 20px;
+  background: #3e3e42;
+  margin: 0 4px;
+}
+
+#torn-notes-drawer .toolbar-btn {
+  padding: 5px 10px;
+  background: transparent;
+  color: #cccccc;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.15s ease;
+}
+
+#torn-notes-drawer .toolbar-btn:hover {
+  background: #2d2d30;
+  color: #ffffff;
+}
+
+#torn-notes-drawer .toolbar-btn svg {
+  opacity: 0.9;
+}
+
+#torn-notes-drawer .toolbar-btn:hover svg {
+  opacity: 1;
+}
+
+#torn-notes-drawer .toolbar-btn-primary {
+  color: #4fc3f7;
+}
+
+#torn-notes-drawer .toolbar-btn-primary:hover {
+  background: rgba(79, 195, 247, 0.15);
+  color: #4fc3f7;
+}
+
+#torn-notes-drawer .toolbar-btn-danger {
+  color: #f48771;
+}
+
+#torn-notes-drawer .toolbar-btn-danger:hover {
+  background: rgba(244, 135, 113, 0.15);
+  color: #f48771;
 }
 
 #torn-notes-drawer .content-area {
