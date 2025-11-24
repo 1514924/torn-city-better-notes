@@ -10,8 +10,6 @@
   const newNoteBtn = document.getElementById('newNoteBtn');
   const saveBtn = document.getElementById('saveBtn');
   const importBtn = document.getElementById('importBtn');
-  const exportBtn = document.getElementById('exportBtn');
-  const deleteBtn = document.getElementById('deleteBtn');
   const closeBtn = document.getElementById('closeBtn');
   const status = document.getElementById('status');
 
@@ -189,9 +187,45 @@
       noteTitle.className = 'note-item-title';
       noteTitle.textContent = note.title || 'Untitled';
 
-      noteItem.appendChild(noteTitle);
+      const noteActions = document.createElement('div');
+      noteActions.className = 'note-item-actions';
 
-      // Add click handler
+      // Export button
+      const exportBtn = document.createElement('button');
+      exportBtn.className = 'note-action-btn';
+      exportBtn.title = 'Export as markdown';
+      exportBtn.innerHTML = `
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M8 15a.5.5 0 01-.5-.5V5.207L5.354 7.354a.5.5 0 11-.708-.708l3-3a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L8.5 5.207V14.5A.5.5 0 018 15z"/>
+          <path d="M2.5 2.5A.5.5 0 013 2h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z"/>
+        </svg>
+      `;
+      exportBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        exportNote(note);
+      });
+
+      // Delete button
+      const deleteBtn = document.createElement('button');
+      deleteBtn.className = 'note-action-btn note-action-btn-danger';
+      deleteBtn.title = 'Delete note';
+      deleteBtn.innerHTML = `
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M6.5 1a.5.5 0 00-.5.5v1h4v-1a.5.5 0 00-.5-.5h-3zM11 2.5v-1A1.5 1.5 0 009.5 0h-3A1.5 1.5 0 005 1.5v1H2.5a.5.5 0 000 1h.05l.5 8.5A1.5 1.5 0 004.55 14h6.9a1.5 1.5 0 001.5-1.5l.5-8.5h.05a.5.5 0 000-1H11z"/>
+        </svg>
+      `;
+      deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        deleteNote(note);
+      });
+
+      noteActions.appendChild(exportBtn);
+      noteActions.appendChild(deleteBtn);
+
+      noteItem.appendChild(noteTitle);
+      noteItem.appendChild(noteActions);
+
+      // Add click handler for note item
       noteItem.addEventListener('click', () => {
         if (isDirty && !confirm('You have unsaved changes. Continue?')) {
           return;
@@ -265,34 +299,35 @@
     }
   }
 
-  // Delete current note
-  async function deleteNote() {
-    if (!currentNote) {
+  // Delete a note
+  async function deleteNote(note) {
+    if (!note) {
       showStatus('No note selected', 'error');
       return;
     }
 
-    if (!confirm('Are you sure you want to delete this note?')) {
+    if (!confirm(`Are you sure you want to delete "${note.title || 'Untitled'}"?`)) {
       return;
     }
 
     try {
-      const response = await Api.DeleteNote(currentNote._id);
+      const response = await Api.DeleteNote(note._id);
 
       if (!response.ok) throw new Error('Failed to delete note');
 
-      // Refresh notes list from server
-      await loadNotes();
+      // Remove from notes array
+      notes = notes.filter(n => n._id !== note._id);
 
-      notes = notes.filter(n => n._id !== currentNote._id);
-      currentNote = null;
-
-      if (notes.length > 0) {
-        loadNote(notes[0]);
-      } else {
-        titleInput.value = '';
-        editor.value = '';
-        updatePreview();
+      // If we deleted the current note, load another one
+      if (currentNote && currentNote._id === note._id) {
+        currentNote = null;
+        if (notes.length > 0) {
+          loadNote(notes[0]);
+        } else {
+          titleInput.value = '';
+          editor.value = '';
+          updatePreview();
+        }
       }
 
       updateNotesList();
@@ -353,17 +388,22 @@
     }
   }
 
-  // Export current note as .md file
-  function exportNote() {
-    if (!editor.value && !titleInput.value) {
-      showStatus('No content to export', 'error');
+  // Export a note as .md file
+  function exportNote(note) {
+    if (!note) {
+      showStatus('No note selected', 'error');
       return;
     }
 
     try {
-      // Create markdown content
-      const content = editor.value;
-      const title = titleInput.value || 'Untitled';
+      // Use decoded content from the note
+      const content = decodeHtmlEntities(note.text) || '';
+      const title = decodeHtmlEntities(note.title) || 'Untitled';
+
+      if (!content && !title) {
+        showStatus('No content to export', 'error');
+        return;
+      }
 
       // Create blob with markdown content
       const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
@@ -405,8 +445,6 @@
   newNoteBtn.addEventListener('click', createNewNote);
   saveBtn.addEventListener('click', saveNote);
   importBtn.addEventListener('click', importNote);
-  exportBtn.addEventListener('click', exportNote);
-  deleteBtn.addEventListener('click', deleteNote);
 
   // Note: closeBtn is now handled in content.js
 

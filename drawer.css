@@ -191,6 +191,10 @@
   border-bottom: 1px solid #2d2d30;
   transition: background 0.15s ease;
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 }
 
 #torn-notes-drawer .note-item:hover {
@@ -208,16 +212,53 @@
 }
 
 #torn-notes-drawer .note-item-title {
+  flex: 1;
   font-size: 13px;
   color: #cccccc;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   font-weight: 500;
+  min-width: 0;
 }
 
 #torn-notes-drawer .note-item.active .note-item-title {
   color: #ffffff;
+}
+
+#torn-notes-drawer .note-item-actions {
+  display: flex;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+  flex-shrink: 0;
+}
+
+#torn-notes-drawer .note-item:hover .note-item-actions {
+  opacity: 1;
+}
+
+#torn-notes-drawer .note-action-btn {
+  padding: 4px;
+  background: transparent;
+  border: none;
+  color: #cccccc;
+  cursor: pointer;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+#torn-notes-drawer .note-action-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+#torn-notes-drawer .note-action-btn-danger:hover {
+  background: rgba(244, 135, 113, 0.2);
+  color: #f48771;
 }
 
 #torn-notes-drawer .notes-empty,
