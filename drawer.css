@@ -132,29 +132,103 @@
   text-decoration: underline;
 }
 
-#torn-notes-drawer .note-selector {
+/* Main container with sidebar layout */
+#torn-notes-drawer .main-container {
+  display: flex;
   flex: 1;
-  min-width: 180px;
-  max-width: 300px;
-  padding: 6px 10px;
+  overflow: hidden;
+}
+
+/* Notes sidebar */
+#torn-notes-drawer .notes-sidebar {
+  width: 250px;
+  min-width: 200px;
+  max-width: 350px;
   background: #252526;
-  border: 1px solid #3e3e42;
-  border-radius: 3px;
-  color: #cccccc;
-  font-size: 12px;
+  border-right: 1px solid #3e3e42;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+#torn-notes-drawer .sidebar-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  background: #2d2d30;
+  border-bottom: 1px solid #3e3e42;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #888;
+}
+
+#torn-notes-drawer .sidebar-header .toolbar-btn {
+  padding: 4px;
+  margin: 0;
+}
+
+#torn-notes-drawer .sidebar-header .toolbar-btn span {
+  display: none;
+}
+
+#torn-notes-drawer .notes-list {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#torn-notes-drawer .note-item {
+  padding: 12px 16px;
   cursor: pointer;
-  transition: all 0.15s ease;
+  border-bottom: 1px solid #2d2d30;
+  transition: background 0.15s ease;
+  position: relative;
 }
 
-#torn-notes-drawer .note-selector:hover {
-  border-color: #4e4e52;
+#torn-notes-drawer .note-item:hover {
   background: #2d2d30;
 }
 
-#torn-notes-drawer .note-selector:focus {
-  outline: none;
-  border-color: #007acc;
-  background: #2d2d30;
+#torn-notes-drawer .note-item.active {
+  background: #094771;
+  border-left: 3px solid #007acc;
+  padding-left: 13px;
+}
+
+#torn-notes-drawer .note-item.active:hover {
+  background: #0d5a8a;
+}
+
+#torn-notes-drawer .note-item-title {
+  font-size: 13px;
+  color: #cccccc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-weight: 500;
+}
+
+#torn-notes-drawer .note-item.active .note-item-title {
+  color: #ffffff;
+}
+
+#torn-notes-drawer .notes-empty,
+#torn-notes-drawer .notes-loading {
+  padding: 20px 16px;
+  text-align: center;
+  color: #888;
+  font-size: 12px;
+}
+
+/* Editor container */
+#torn-notes-drawer .editor-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
 
 #torn-notes-drawer .close-btn {

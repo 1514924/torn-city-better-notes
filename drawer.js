@@ -6,7 +6,7 @@
   const editor = document.getElementById('editor');
   const preview = document.getElementById('preview');
   const titleInput = document.getElementById('titleInput');
-  const noteSelector = document.getElementById('noteSelector');
+  const notesList = document.getElementById('notesList');
   const newNoteBtn = document.getElementById('newNoteBtn');
   const saveBtn = document.getElementById('saveBtn');
   const importBtn = document.getElementById('importBtn');
@@ -153,7 +153,7 @@
       const data = await response.json();
 
       notes = data.notes || [];
-      updateNoteSelector();
+      updateNotesList();
 
       if (notes.length > 0 && !currentNote) {
         loadNote(notes[0]);
@@ -163,27 +163,43 @@
     } catch (error) {
       console.error('Error loading notes:', error);
       showStatus('Error loading notes', 'error');
-      noteSelector.innerHTML = '<option value="">Error loading notes</option>';
+      notesList.innerHTML = '<div class="notes-empty">Error loading notes</div>';
     }
   }
 
-  // Update note selector dropdown
-  function updateNoteSelector() {
-    noteSelector.innerHTML = '';
+  // Update notes list in sidebar
+  function updateNotesList() {
+    notesList.innerHTML = '';
 
     if (notes.length === 0) {
-      noteSelector.innerHTML = '<option value="">No notes - Create a new one</option>';
+      notesList.innerHTML = '<div class="notes-empty">No notes - Create a new one</div>';
       return;
     }
 
     notes.forEach(note => {
-      const option = document.createElement('option');
-      option.value = note._id;
-      option.textContent = note.title || 'Untitled';
+      const noteItem = document.createElement('div');
+      noteItem.className = 'note-item';
+      noteItem.dataset.noteId = note._id;
+
       if (currentNote && currentNote._id === note._id) {
-        option.selected = true;
+        noteItem.classList.add('active');
       }
-      noteSelector.appendChild(option);
+
+      const noteTitle = document.createElement('div');
+      noteTitle.className = 'note-item-title';
+      noteTitle.textContent = note.title || 'Untitled';
+
+      noteItem.appendChild(noteTitle);
+
+      // Add click handler
+      noteItem.addEventListener('click', () => {
+        if (isDirty && !confirm('You have unsaved changes. Continue?')) {
+          return;
+        }
+        loadNote(note);
+      });
+
+      notesList.appendChild(noteItem);
     });
   }
 
@@ -194,7 +210,7 @@
     editor.value = decodeHtmlEntities(note.text) || '';
     updatePreview();
     isDirty = false;
-    updateNoteSelector();
+    updateNotesList();
   }
 
   // Create new note
@@ -241,7 +257,7 @@
       currentNote.title = titleInput.value;
       currentNote.text = editor.value;
       isDirty = false;
-      updateNoteSelector();
+      updateNotesList();
       showStatus('Note saved successfully', 'success');
     } catch (error) {
       console.error('Error saving note:', error);
@@ -279,7 +295,7 @@
         updatePreview();
       }
 
-      updateNoteSelector();
+      updateNotesList();
       showStatus('Note deleted successfully', 'success');
     } catch (error) {
       console.error('Error deleting note:', error);
@@ -384,18 +400,6 @@
 
   titleInput.addEventListener('input', () => {
     isDirty = true;
-  });
-
-  noteSelector.addEventListener('change', (e) => {
-    if (isDirty && !confirm('You have unsaved changes. Continue?')) {
-      noteSelector.value = currentNote ? currentNote._id : '';
-      return;
-    }
-
-    const selectedNote = notes.find(n => n._id === e.target.value);
-    if (selectedNote) {
-      loadNote(selectedNote);
-    }
   });
 
   newNoteBtn.addEventListener('click', createNewNote);
