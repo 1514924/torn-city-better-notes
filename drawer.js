@@ -7,6 +7,8 @@
   const preview = document.getElementById('preview');
   const titleInput = document.getElementById('titleInput');
   const notesList = document.getElementById('notesList');
+  const notesSidebar = document.getElementById('notesSidebar');
+  const toggleSidebarBtn = document.getElementById('toggleSidebarBtn');
   const newNoteBtn = document.getElementById('newNoteBtn');
   const saveBtn = document.getElementById('saveBtn');
   const importBtn = document.getElementById('importBtn');
@@ -54,6 +56,31 @@
   let notes = [];
   let currentNote = null;
   let isDirty = false;
+  let isSidebarCollapsed = localStorage.getItem('torn-notes-sidebar-collapsed') === 'true';
+
+  // Toggle sidebar collapse
+  function toggleSidebar() {
+    isSidebarCollapsed = !isSidebarCollapsed;
+    localStorage.setItem('torn-notes-sidebar-collapsed', isSidebarCollapsed);
+
+    if (isSidebarCollapsed) {
+      notesSidebar.classList.add('collapsed');
+      toggleSidebarBtn.title = 'Expand sidebar';
+      toggleSidebarBtn.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M4.646 1.646a.5.5 0 01.708 0l6 6a.5.5 0 010 .708l-6 6a.5.5 0 01-.708-.708L10.293 8 4.646 2.354a.5.5 0 010-.708z"/>
+        </svg>
+      `;
+    } else {
+      notesSidebar.classList.remove('collapsed');
+      toggleSidebarBtn.title = 'Collapse sidebar';
+      toggleSidebarBtn.innerHTML = `
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+          <path d="M11.354 1.646a.5.5 0 010 .708L5.707 8l5.647 5.646a.5.5 0 01-.708.708l-6-6a.5.5 0 010-.708l6-6a.5.5 0 01.708 0z"/>
+        </svg>
+      `;
+    }
+  }
 
   // Decode HTML entities
   function decodeHtmlEntities(text) {
@@ -449,6 +476,7 @@
     isDirty = true;
   });
 
+  toggleSidebarBtn.addEventListener('click', toggleSidebar);
   newNoteBtn.addEventListener('click', createNewNote);
   saveBtn.addEventListener('click', saveNote);
   importBtn.addEventListener('click', importNote);
@@ -465,5 +493,10 @@
   });
 
   // Initialize
+  // Restore sidebar collapsed state
+  if (isSidebarCollapsed) {
+    toggleSidebar();
+  }
+
   loadNotes();
 })();

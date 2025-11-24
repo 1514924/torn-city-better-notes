@@ -42,8 +42,13 @@
         </div>
 
         <div class="main-container">
-          <div class="notes-sidebar">
+          <div class="notes-sidebar" id="notesSidebar">
             <div class="sidebar-header">
+              <button class="toolbar-btn" id="toggleSidebarBtn" title="Collapse sidebar">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M11.354 1.646a.5.5 0 010 .708L5.707 8l5.647 5.646a.5.5 0 01-.708.708l-6-6a.5.5 0 010-.708l6-6a.5.5 0 01.708 0z"/>
+                </svg>
+              </button>
               <span>Notes</span>
               <div class="sidebar-actions">
                 <button class="toolbar-btn" id="newNoteBtn" title="Create new note">
@@ -67,16 +72,12 @@
           <div class="editor-container">
             <div class="title-section">
               <input type="text" class="title-input" id="titleInput" placeholder="Untitled Note" spellcheck="false">
-              <div class="toolbar">
-                <div class="toolbar-group">
-                  <button class="toolbar-btn toolbar-btn-primary" id="saveBtn" title="Save note (Cmd/Ctrl+S)">
-                    <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
-                      <path d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z"/>
-                    </svg>
-                    <span>Save</span>
-                  </button>
-                </div>
-              </div>
+              <button class="toolbar-btn toolbar-btn-primary" id="saveBtn" title="Save note (Cmd/Ctrl+S)">
+                <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+                  <path d="M13.854 3.646a.5.5 0 010 .708l-7 7a.5.5 0 01-.708 0l-3.5-3.5a.5.5 0 11.708-.708L6.5 10.293l6.646-6.647a.5.5 0 01.708 0z"/>
+                </svg>
+                <span>Save</span>
+              </button>
             </div>
 
             <div class="content-area">
