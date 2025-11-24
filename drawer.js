@@ -174,7 +174,14 @@
       return;
     }
 
-    notes.forEach(note => {
+    // Sort notes alphabetically by title (case-insensitive)
+    const sortedNotes = [...notes].sort((a, b) => {
+      const titleA = (a.title || 'Untitled').toLowerCase();
+      const titleB = (b.title || 'Untitled').toLowerCase();
+      return titleA.localeCompare(titleB);
+    });
+
+    sortedNotes.forEach(note => {
       const noteItem = document.createElement('div');
       noteItem.className = 'note-item';
       noteItem.dataset.noteId = note._id;
