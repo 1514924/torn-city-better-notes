@@ -2,8 +2,7 @@
 
 A Chrome extension that adds a markdown editor to torn.com notes with live preview.
 
-<img width="2558" height="1272" alt="image" src="https://github.com/user-attachments/assets/febd00c7-ffe5-4d3d-b59b-e6071839bb39" />
-
+<img width="2537" height="1270" alt="image" src="https://github.com/user-attachments/assets/164e4205-69cc-422a-a7f7-a3ae0e6ccf01" />
 
 ## Installation
 
@@ -28,8 +27,8 @@ A Chrome extension that adds a markdown editor to torn.com notes with live previ
 - Split-pane editor with live markdown preview
 - Syncs with your torn.com notes
 - Export notes as `.md` files for backup or use in other editors
-- Dark theme matching VS Code
-- Keyboard shortcuts for quick access
+- Notes sorted alphabetically
+- Supports folders (including nested folders) by adding `/` to your note names
 - Support for basic markdown: headers, bold, italic, links, lists, code blocks, etc.
 
 ---
