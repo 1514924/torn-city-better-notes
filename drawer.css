@@ -161,7 +161,8 @@
 #torn-notes-drawer .notes-sidebar.collapsed .sidebar-header span,
 #torn-notes-drawer .notes-sidebar.collapsed .note-item,
 #torn-notes-drawer .notes-sidebar.collapsed .notes-empty,
-#torn-notes-drawer .notes-sidebar.collapsed .notes-loading {
+#torn-notes-drawer .notes-sidebar.collapsed .notes-loading,
+#torn-notes-drawer .notes-sidebar.collapsed .folder-item {
   display: none;
 }
 
@@ -298,6 +299,46 @@
   text-align: center;
   color: #888;
   font-size: 12px;
+}
+
+/* Folder items */
+#torn-notes-drawer .folder-item {
+  border-bottom: 1px solid #2d2d30;
+}
+
+#torn-notes-drawer .folder-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+#torn-notes-drawer .folder-header:hover {
+  background: #2d2d30;
+}
+
+#torn-notes-drawer .folder-toggle-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  color: #888;
+  flex-shrink: 0;
+}
+
+#torn-notes-drawer .folder-label {
+  font-size: 13px;
+  color: #cccccc;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: normal;
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 /* Editor container */

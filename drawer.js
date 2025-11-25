@@ -57,6 +57,7 @@
   let currentNote = null;
   let isDirty = false;
   let isSidebarCollapsed = localStorage.getItem('torn-notes-sidebar-collapsed') === 'true';
+  let collapsedFolders = new Set(JSON.parse(localStorage.getItem('torn-notes-collapsed-folders') || '[]'));
 
   // Toggle sidebar collapse
   function toggleSidebar() {
@@ -192,6 +193,206 @@
     }
   }
 
+  // Build folder tree from notes
+  function buildFolderTree(notes) {
+    const tree = { folders: {}, notes: [] };
+
+    notes.forEach(note => {
+      const title = note.title || 'Untitled';
+      const parts = title.split('/');
+
+      if (parts.length === 1) {
+        // No folder, add to root
+        tree.notes.push(note);
+      } else {
+        // Has folder(s)
+        let current = tree;
+
+        // Navigate/create folder structure
+        for (let i = 0; i < parts.length - 1; i++) {
+          const folderName = parts[i];
+          if (!current.folders[folderName]) {
+            current.folders[folderName] = { folders: {}, notes: [] };
+          }
+          current = current.folders[folderName];
+        }
+
+        // Add note to final folder
+        current.notes.push(note);
+      }
+    });
+
+    return tree;
+  }
+
+  // Toggle folder collapse state
+  function toggleFolder(folderPath) {
+    if (collapsedFolders.has(folderPath)) {
+      collapsedFolders.delete(folderPath);
+    } else {
+      collapsedFolders.add(folderPath);
+    }
+    localStorage.setItem('torn-notes-collapsed-folders', JSON.stringify([...collapsedFolders]));
+    updateNotesList();
+  }
+
+  // Render note item
+  function renderNoteItem(note, depth = 0) {
+    const noteItem = document.createElement('div');
+    noteItem.className = 'note-item';
+    noteItem.dataset.noteId = note._id;
+    if (depth > 0) {
+      noteItem.style.paddingLeft = `${16 + depth * 16}px`;
+    }
+
+    if (currentNote && currentNote._id === note._id) {
+      noteItem.classList.add('active');
+    }
+
+    const noteTitle = document.createElement('div');
+    noteTitle.className = 'note-item-title';
+    // Show only the last part of the path (after last /)
+    const title = note.title || 'Untitled';
+    const parts = title.split('/');
+    noteTitle.textContent = parts[parts.length - 1];
+
+    const noteActions = document.createElement('div');
+    noteActions.className = 'note-item-actions';
+
+    // Export button
+    const exportBtn = document.createElement('button');
+    exportBtn.className = 'note-action-btn';
+    exportBtn.title = 'Export as markdown';
+    exportBtn.innerHTML = `
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8 15a.5.5 0 01-.5-.5V5.207L5.354 7.354a.5.5 0 11-.708-.708l3-3a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L8.5 5.207V14.5A.5.5 0 018 15z"/>
+        <path d="M2.5 2.5A.5.5 0 013 2h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z"/>
+      </svg>
+    `;
+    exportBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      exportNote(note);
+    });
+
+    // Delete button
+    const deleteBtn = document.createElement('button');
+    deleteBtn.className = 'note-action-btn note-action-btn-danger';
+    deleteBtn.title = 'Delete note';
+    deleteBtn.innerHTML = `
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M6.5 1a.5.5 0 00-.5.5v1h4v-1a.5.5 0 00-.5-.5h-3zM11 2.5v-1A1.5 1.5 0 009.5 0h-3A1.5 1.5 0 005 1.5v1H2.5a.5.5 0 000 1h.05l.5 8.5A1.5 1.5 0 004.55 14h6.9a1.5 1.5 0 001.5-1.5l.5-8.5h.05a.5.5 0 000-1H11z"/>
+      </svg>
+    `;
+    deleteBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      deleteNote(note);
+    });
+
+    noteActions.appendChild(exportBtn);
+    noteActions.appendChild(deleteBtn);
+
+    noteItem.appendChild(noteTitle);
+    noteItem.appendChild(noteActions);
+
+    // Add click handler for note item
+    noteItem.addEventListener('click', () => {
+      if (isDirty && !confirm('You have unsaved changes. Continue?')) {
+        return;
+      }
+      loadNote(note);
+    });
+
+    return noteItem;
+  }
+
+  // Render folder and its contents recursively
+  function renderFolder(folderName, folderData, parentPath = '', depth = 0) {
+    const elements = [];
+    const folderPath = parentPath ? `${parentPath}/${folderName}` : folderName;
+    const isCollapsed = collapsedFolders.has(folderPath);
+
+    // Create folder item
+    const folderItem = document.createElement('div');
+    folderItem.className = 'folder-item';
+
+    const folderHeader = document.createElement('div');
+    folderHeader.className = 'folder-header';
+    if (depth > 0) {
+      folderHeader.style.paddingLeft = `${16 + depth * 16}px`;
+    }
+
+    const folderIcon = document.createElement('span');
+    folderIcon.className = 'folder-toggle-icon';
+    folderIcon.innerHTML = isCollapsed ? `
+      <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor">
+        <polygon points="2,1 7,4 2,7"/>
+      </svg>
+    ` : `
+      <svg width="8" height="8" viewBox="0 0 8 8" fill="currentColor">
+        <polygon points="1,2 4,7 7,2"/>
+      </svg>
+    `;
+
+    const folderLabel = document.createElement('span');
+    folderLabel.className = 'folder-label';
+    folderLabel.textContent = folderName;
+
+    folderHeader.appendChild(folderIcon);
+    folderHeader.appendChild(folderLabel);
+    folderItem.appendChild(folderHeader);
+
+    folderHeader.addEventListener('click', () => {
+      toggleFolder(folderPath);
+    });
+
+    elements.push(folderItem);
+
+    // Render folder contents if not collapsed
+    if (!isCollapsed) {
+      // Create combined list of folders and notes for sorting
+      const items = [];
+
+      // Add subfolders
+      Object.keys(folderData.folders).forEach(subfolderName => {
+        items.push({
+          type: 'folder',
+          name: subfolderName.toLowerCase(),
+          data: { name: subfolderName, folder: folderData.folders[subfolderName] }
+        });
+      });
+
+      // Add notes
+      folderData.notes.forEach(note => {
+        const noteName = (note.title || 'Untitled').split('/').pop();
+        items.push({
+          type: 'note',
+          name: noteName.toLowerCase(),
+          data: note
+        });
+      });
+
+      // Sort everything together alphabetically
+      items.sort((a, b) => a.name.localeCompare(b.name));
+
+      // Render in sorted order
+      items.forEach(item => {
+        if (item.type === 'folder') {
+          const subfolderElements = renderFolder(
+            item.data.name,
+            item.data.folder,
+            folderPath,
+            depth + 1
+          );
+          elements.push(...subfolderElements);
+        } else {
+          elements.push(renderNoteItem(item.data, depth + 1));
+        }
+      });
+    }
+
+    return elements;
+  }
+
   // Update notes list in sidebar
   function updateNotesList() {
     notesList.innerHTML = '';
@@ -201,73 +402,49 @@
       return;
     }
 
-    // Sort notes alphabetically by title (case-insensitive)
+    // Sort notes alphabetically by full title (case-insensitive)
     const sortedNotes = [...notes].sort((a, b) => {
       const titleA = (a.title || 'Untitled').toLowerCase();
       const titleB = (b.title || 'Untitled').toLowerCase();
       return titleA.localeCompare(titleB);
     });
 
-    sortedNotes.forEach(note => {
-      const noteItem = document.createElement('div');
-      noteItem.className = 'note-item';
-      noteItem.dataset.noteId = note._id;
+    // Build folder tree
+    const tree = buildFolderTree(sortedNotes);
 
-      if (currentNote && currentNote._id === note._id) {
-        noteItem.classList.add('active');
+    // Create combined list of root folders and notes for sorting
+    const rootItems = [];
+
+    // Add root folders
+    Object.keys(tree.folders).forEach(folderName => {
+      rootItems.push({
+        type: 'folder',
+        name: folderName.toLowerCase(),
+        data: { name: folderName, folder: tree.folders[folderName] }
+      });
+    });
+
+    // Add root notes
+    tree.notes.forEach(note => {
+      const noteName = (note.title || 'Untitled');
+      rootItems.push({
+        type: 'note',
+        name: noteName.toLowerCase(),
+        data: note
+      });
+    });
+
+    // Sort everything together alphabetically
+    rootItems.sort((a, b) => a.name.localeCompare(b.name));
+
+    // Render in sorted order
+    rootItems.forEach(item => {
+      if (item.type === 'folder') {
+        const folderElements = renderFolder(item.data.name, item.data.folder);
+        folderElements.forEach(el => notesList.appendChild(el));
+      } else {
+        notesList.appendChild(renderNoteItem(item.data, 0));
       }
-
-      const noteTitle = document.createElement('div');
-      noteTitle.className = 'note-item-title';
-      noteTitle.textContent = note.title || 'Untitled';
-
-      const noteActions = document.createElement('div');
-      noteActions.className = 'note-item-actions';
-
-      // Export button
-      const exportBtn = document.createElement('button');
-      exportBtn.className = 'note-action-btn';
-      exportBtn.title = 'Export as markdown';
-      exportBtn.innerHTML = `
-        <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M8 15a.5.5 0 01-.5-.5V5.207L5.354 7.354a.5.5 0 11-.708-.708l3-3a.5.5 0 01.708 0l3 3a.5.5 0 01-.708.708L8.5 5.207V14.5A.5.5 0 018 15z"/>
-          <path d="M2.5 2.5A.5.5 0 013 2h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z"/>
-        </svg>
-      `;
-      exportBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        exportNote(note);
-      });
-
-      // Delete button
-      const deleteBtn = document.createElement('button');
-      deleteBtn.className = 'note-action-btn note-action-btn-danger';
-      deleteBtn.title = 'Delete note';
-      deleteBtn.innerHTML = `
-        <svg width="12" height="12" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M6.5 1a.5.5 0 00-.5.5v1h4v-1a.5.5 0 00-.5-.5h-3zM11 2.5v-1A1.5 1.5 0 009.5 0h-3A1.5 1.5 0 005 1.5v1H2.5a.5.5 0 000 1h.05l.5 8.5A1.5 1.5 0 004.55 14h6.9a1.5 1.5 0 001.5-1.5l.5-8.5h.05a.5.5 0 000-1H11z"/>
-        </svg>
-      `;
-      deleteBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        deleteNote(note);
-      });
-
-      noteActions.appendChild(exportBtn);
-      noteActions.appendChild(deleteBtn);
-
-      noteItem.appendChild(noteTitle);
-      noteItem.appendChild(noteActions);
-
-      // Add click handler for note item
-      noteItem.addEventListener('click', () => {
-        if (isDirty && !confirm('You have unsaved changes. Continue?')) {
-          return;
-        }
-        loadNote(note);
-      });
-
-      notesList.appendChild(noteItem);
     });
   }
 
